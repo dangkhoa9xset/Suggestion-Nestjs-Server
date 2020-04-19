@@ -128,7 +128,7 @@ export class UserService extends BaseService<User> {
 
         const exits = await this.findOne({ email: newUser.email })
 
-        if (result.jobTitle.indexOf('Manager') > 0) {
+        if (result.jobTitle.indexOf('Manager') > 0 || newUser.email === 'vnphanminhdk@tetrapak.com') {
             newUser.role = UserRole.Approver
         } else {
             newUser.role = UserRole.User

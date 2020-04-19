@@ -2,8 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpExceptionFilter } from './shared/filters/http-exception.filter';
+import * as fs from 'fs';
 
 async function bootstrap() {
+    // const httpsOptions = {
+    //     key: fs.readFileSync('./3024169_localhost.key'),
+    //     cert: fs.readFileSync('./3024169_localhost.cert'),
+    //};
     const app = await NestFactory.create(AppModule, {cors: true});
     const hostDomain = AppModule.isDev ? `${AppModule.host}:${AppModule.port}` : AppModule.host;
 
