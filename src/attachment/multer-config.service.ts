@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { MulterModuleOptions, MulterOptionsFactory } from '@nestjs/platform-express';
 import * as GridFsStorage from 'multer-gridfs-storage';
-import { Configuration } from '../shared/configuration/configuration.enum';
-import { ConfigurationService } from '../shared/configuration/configuration.service';
+import config from '../../config/default'
 
 @Injectable()
 export class GridFsMulterConfigService implements MulterOptionsFactory {
     gridFsStorage: GridFsStorage;
     constructor() {
         this.gridFsStorage = new GridFsStorage({
-            url: 'mongodb://mongo/suggestion-app',
+            url: config.MONGO_URI,
             file: (req, file) => {
                 return new Promise((resolve, reject) => {
                     const filename = file.originalname.trim();
