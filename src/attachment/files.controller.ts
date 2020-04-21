@@ -1,15 +1,22 @@
 import { Post, Get, Param, Res, Controller, UseInterceptors, UseGuards, UploadedFiles, HttpException, HttpStatus, Delete } from '@nestjs/common';
-import { ApiCreatedResponse, ApiConsumes, ApiImplicitFile, ApiBadRequestResponse, ApiUseTags } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiConsumes, ApiImplicitFile, ApiBadRequestResponse, ApiUseTags, ApiBearerAuth } from '@nestjs/swagger';
 import { ApiException } from '../shared/api-exception.model';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { FilesService } from './files.service';
 import { FileResponseVm } from './view-models/file-response-vm.model'
-
+import { Roles } from 'src/shared/decorators/roles.decorator';
+import { UserRole } from '../user/models/user-role.enum';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from 'src/shared/guards/roles.guard';
 @Controller('/attachment/files')
 @ApiUseTags('Attachments')
+@Roles(UserRole.Admin, UserRole.Approver, UserRole.User)
 export class FilesController {
     constructor(private filesService: FilesService){}
     @Post('')
+    @ApiBearerAuth()
+    @Roles(UserRole.Admin, UserRole.Approver, UserRole.User)
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
     @ApiConsumes('multipart/form-data')
     @ApiImplicitFile({name: 'files', required: true, description: 'Attachment Files'})
     @UseInterceptors(FilesInterceptor('files'))
@@ -36,6 +43,9 @@ export class FilesController {
     }
 
     @Get('info/:id')
+    @ApiBearerAuth()
+    @Roles(UserRole.Admin, UserRole.Approver, UserRole.User)
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
     @ApiBadRequestResponse({ type: ApiException })
     async getFileInfo(@Param('id') id: string): Promise<FileResponseVm> {        
         const file = await this.filesService.findInfo(id)
@@ -50,6 +60,9 @@ export class FilesController {
     }
 
     @Get(':id')
+    @ApiBearerAuth()
+    @Roles(UserRole.Admin, UserRole.Approver, UserRole.User)
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
     @ApiBadRequestResponse({ type: ApiException })
     async getFile(@Param('id') id: string, @Res() res) {        
         const file = await this.filesService.findInfo(id)
@@ -75,6 +88,9 @@ export class FilesController {
     }
 
     @Delete(':id')
+    @ApiBearerAuth()
+    @Roles(UserRole.Admin, UserRole.Approver, UserRole.User)
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
     @ApiBadRequestResponse({ type: ApiException })
     @ApiCreatedResponse({ type: FileResponseVm })
     async deleteFile(@Param('id') id: string): Promise<FileResponseVm> {
