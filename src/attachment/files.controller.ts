@@ -60,9 +60,6 @@ export class FilesController {
     }
 
     @Get(':id')
-    @ApiBearerAuth()
-    @Roles(UserRole.Admin, UserRole.Approver, UserRole.User)
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
     @ApiBadRequestResponse({ type: ApiException })
     async getFile(@Param('id') id: string, @Res() res) {        
         const file = await this.filesService.findInfo(id)
